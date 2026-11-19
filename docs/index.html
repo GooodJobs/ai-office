@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>k-keyword AI 오피스</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#1b1f24; --muted:#667085; --line:#e4e7ec;
+  --accent:#3b5bdb; --accent-soft:#e7ecff;
+  --ok:#1f8a4c; --ok-soft:#e3f5ea; --warn:#b26a00; --warn-soft:#fff3df; --bad:#c0362c; --bad-soft:#fde8e6;
+  --idle:#667085; --idle-soft:#eef0f3;
+  --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1216; --card:#171b21; --ink:#e7eaee; --muted:#98a2b3; --line:#2a3039;
+    --accent:#8ea2ff; --accent-soft:#1f2747;
+    --ok:#5cc98a; --ok-soft:#14301f; --warn:#f0b357; --warn-soft:#33270f; --bad:#f2837a; --bad-soft:#3a1916;
+    --idle:#98a2b3; --idle-soft:#232831; --shadow:none;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-size:22px;margin:0;letter-spacing:-.02em}
+.sub{color:var(--muted);font-size:13px}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  border-radius:8px;padding:7px 12px;cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi,.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.kpi{padding:14px 16px}
+.kpi b{display:block;font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi span{color:var(--muted);font-size:12.5px}
+section{margin-bottom:18px}
+h2{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+h2 small{color:var(--muted);font-weight:400;font-size:12.5px}
+.team{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.member{padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.member.lead{border-color:var(--accent);background:linear-gradient(0deg,var(--card),var(--card)),var(--accent-soft)}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.mname{font-weight:700}
+.model{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:1px 7px}
+.role{font-size:12.5px;color:var(--muted)}
+.report{font-size:13px;background:var(--bg);border-radius:8px;padding:8px;min-height:44px;word-break:break-word}
+.meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.p-ok{background:var(--ok-soft);color:var(--ok)} .p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-bad{background:var(--bad-soft);color:var(--bad)} .p-idle{background:var(--idle-soft);color:var(--idle)}
+.p-acc{background:var(--accent-soft);color:var(--accent)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.card{padding:16px}
+.gauge{display:flex;align-items:center;gap:18px;margin-bottom:12px}
+.ring{--p:0;width:108px;height:108px;border-radius:50%;flex:none;
+  background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--idle-soft) 0);display:grid;place-items:center}
+.ring::after{content:attr(data-label);width:80px;height:80px;border-radius:50%;background:var(--card);
+  display:grid;place-items:center;font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-direction:column;gap:4px;font-size:13px}
+.bar{height:8px;border-radius:99px;background:var(--idle-soft);overflow:hidden;display:flex;margin-top:6px}
+.bar i{display:block;height:100%}
+.list{list-style:none;margin:0;padding:0;max-height:340px;overflow:auto}
+.list li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px;border-top:1px solid var(--line);font-size:13.5px}
+.list li:first-child{border-top:0}
+.list .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list a{color:inherit;text-decoration:none} .list a:hover{text-decoration:underline}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.filters button.on{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 8px;border-top:1px solid var(--line);vertical-align:middle}
+th{color:var(--muted);font-weight:600;font-size:12.5px;border-top:0}
+td.num{font-variant-numeric:tabular-nums;text-align:right} th.num{text-align:right}
+.logs{list-style:none;margin:0;padding:0;max-height:420px;overflow:auto}
+.logs li{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;padding:10px 2px;border-top:1px solid var(--line);font-size:13.5px}
+.logs li:first-child{border-top:0}
+.logs .when{grid-column:1/-1;color:var(--muted);font-size:12px}
+.empty{color:var(--muted);font-size:13px;padding:14px 2px}
+@media (max-width:1000px){.team{grid-template-columns:repeat(2,1fr)} .member.lead{grid-column:1/-1}}
+@media (max-width:760px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  table.resp thead{display:none}
+  table.resp tr{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-top:1px solid var(--line)}
+  table.resp td{border:0;padding:0;text-align:left}
+  table.resp td.c-title{grid-column:1/-1;font-weight:600}
+  table.resp td.num{text-align:left;color:var(--muted);font-size:12.5px}
+  table.resp td.num::before{content:attr(data-k) " "}
+}
+@media (max-width:420px){.team{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>k-keyword AI 오피스</h1>
+      <div class="sub">팀장 중심 1인 보고 체계 · 마지막 갱신 <span id="updated"></span></div>
+    </div>
+    <button onclick="location.reload()">새로고침</button>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section>
+    <h2>팀 현황 <small>팀원 보고 → 팀장 재검수 → 사용자 결재</small></h2>
+    <div class="team" id="team"></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>애드센스 리모델링 진행률</h2>
+      <div class="gauge">
+        <div class="ring" id="ring" data-label="0%"></div>
+        <div class="legend" id="rlegend"></div>
+      </div>
+      <div class="filters" id="rfilters"></div>
+      <ul class="list" id="rlist"></ul>
+    </section>
+    <section class="card">
+      <h2>키워드 대기열</h2>
+      <ul class="list" id="queue"></ul>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>예약 발행 목록</h2>
+    <table class="resp" id="sched">
+      <thead><tr><th>제목</th><th>예약 일시</th><th class="num">글자 수</th><th class="num">이미지</th><th>검증</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>팀장 재검수 · 루프 로그</h2>
+    <ul class="logs" id="logs"></ul>
+  </section>
+</div>
+
+<script id="data" type="application/json">{"updated_at": "2026-11-19 13:17", "team": [{"id": "lead", "name": "총괄 팀장", "role": "편집장 · 재검수 · 결재 보고", "model": "Sonnet", "status": "대기", "last_report": "AI 오피스 구축 완료 — 사용자 .env 입력 대기", "report_at": "2026-11-19 13:17", "count": 0}, {"id": "remodeler", "name": "계약직 리모델러", "role": "애드센스 정밀 검수·수정", "model": "Sonnet", "status": "대기", "last_report": "", "report_at": "", "count": 0}, {"id": "planner", "name": "기획자 ①", "role": "키워드 리서치 · 목차 기획", "model": "Haiku", "status": "대기", "last_report": "", "report_at": "", "count": 0}, {"id": "writer", "name": "작가 ②", "role": "IT섭 스타일 집필", "model": "Sonnet", "status": "대기", "last_report": "", "report_at": "", "count": 0}, {"id": "auditor", "name": "검수관 ③", "role": "품질 · 미디어 1차 검수", "model": "Haiku", "status": "대기", "last_report": "", "report_at": "", "count": 0}], "remodel": [{"id": 468, "title": "2026 연말정산 미리보기 홈택스 로그인 방법: 민간 인증서(토스·패스·네이버) 등록과 오류 해결", "url": "https://k-keyword.com/hometax-year-end-tax-preview-login-certificate/", "status": "미완료", "updated_at": ""}, {"id": 466, "title": "겨울철 아이폰 배터리가 빨리 닳고 갑자기 꺼질 때: 원인과 방지 설정·습관 4가지", "url": "https://k-keyword.com/iphone-winter-battery-shutdown-fix/", "status": "미완료", "updated_at": ""}, {"id": 462, "title": "2026 블랙프라이데이 애플 맥북·아이패드 할인 보는 법: 가격 추적 사이트와 관부가세 계산", "url": "https://k-keyword.com/black-friday-2026-apple-deals-customs-tax/", "status": "미완료", "updated_at": ""}, {"id": 460, "title": "알리익스프레스 광군제 직구 팁: 스타일러스 펜·실리콘 키스킨 실패 줄이는 법", "url": "https://k-keyword.com/aliexpress-singles-day-accessories-tips/", "status": "미완료", "updated_at": ""}, {"id": 457, "title": "아이폰 듀오 Split View 사용법: 두 앱 동시에 열기, 위치 바꾸기, 페어링까지", "url": "https://k-keyword.com/iphone-duo-split-view-guide/", "status": "미완료", "updated_at": ""}, {"id": 455, "title": "아이폰 듀오 내부 화면 관리법: 보호필름 붙여야 할까? 확인할 점과 주의사항", "url": "https://k-keyword.com/iphone-duo-inner-display-care/", "status": "미완료", "updated_at": ""}, {"id": 453, "title": "에어팟 5 vs 에어팟 4 차이 비교: 노이즈 캔슬링·배터리·가격, 지금 사도 될까?", "url": "https://k-keyword.com/airpods-5-vs-airpods-4-comparison/", "status": "미완료", "updated_at": ""}, {"id": 182, "title": "아이폰 천지인 키보드 설정과 글자 크기 키우기: 오타 줄이는 방법 총정리", "url": "https://k-keyword.com/iphone-cheonjiin-keyboard-text-size/", "status": "미완료", "updated_at": ""}, {"id": 447, "title": "에어팟 한쪽만 안 들릴 때 해결 방법: 충전·밸런스 확인부터 초기화·재연결까지", "url": "https://k-keyword.com/airpods-one-side-not-working-fix/", "status": "미완료", "updated_at": ""}, {"id": 180, "title": "아이폰 중고 판매 전 초기화 방법: 나의 찾기·계정·eSIM까지 체크리스트", "url": "https://k-keyword.com/iphone-reset-before-selling-guide/", "status": "미완료", "updated_at": ""}, {"id": 178, "title": "아이폰 와이파이 끊김·인터넷 느려짐 해결 방법: 쉬운 점검 순서", "url": "https://k-keyword.com/iphone-wifi-disconnect-fix/", "status": "미완료", "updated_at": ""}, {"id": 176, "title": "아이폰 카메라 격자 설정과 사진 보정 팁 3가지: 보정 앱 없이 사진 잘 찍는 법", "url": "https://k-keyword.com/iphone-camera-grid-photo-tips/", "status": "미완료", "updated_at": ""}, {"id": 174, "title": "컴퓨터 부팅 속도 개선 방법: 윈도우·맥 시작 프로그램과 저장 공간 점검", "url": "https://k-keyword.com/boot-speed-up-windows-mac/", "status": "미완료", "updated_at": ""}, {"id": 171, "title": "아이폰 배터리 수명 늘리는 설정 5가지와 배터리 상태 확인 방법", "url": "https://k-keyword.com/iphone-battery-life-tips/", "status": "미완료", "updated_at": ""}, {"id": 166, "title": "마이크로소프트 365 무료로 쓰는 합법적인 방법과 한계", "url": "https://k-keyword.com/microsoft-365-free-legal-ways/", "status": "미완료", "updated_at": ""}, {"id": 163, "title": "아이폰 저장 공간 부족 해결: iCloud 사진 최적화와 정리 방법", "url": "https://k-keyword.com/iphone-storage-icloud-photos/", "status": "미완료", "updated_at": ""}, {"id": 148, "title": "대학생 노트북 고르는 기준: 그램·갤럭시북·씽크패드 비교", "url": "https://k-keyword.com/college-laptop-buying-guide/", "status": "미완료", "updated_at": ""}, {"id": 141, "title": "LG전자·애플 AI홈 기기 7종 총정리: 공개된 내용과 출시 일정", "url": "https://k-keyword.com/lg-apple-ai-home-7-products/", "status": "미완료", "updated_at": ""}, {"id": 139, "title": "부동산 전자계약 진행 순서와 계약 전 확인할 것 총정리", "url": "https://k-keyword.com/real-estate-electronic-contract-guide/", "status": "미완료", "updated_at": ""}, {"id": 128, "title": "스마트폰이 물에 빠졌을 때 대처법: 드라이기·쌀을 쓰면 안 되는 이유", "url": "https://k-keyword.com/phone-water-damage-first-aid/", "status": "미완료", "updated_at": ""}, {"id": 122, "title": "애플워치 시리 한국어 사용법: 설정 방법과 쓸 만한 음성 명령", "url": "https://k-keyword.com/apple-watch-siri-korean-guide/", "status": "미완료", "updated_at": ""}, {"id": 106, "title": "금융권 AI 해킹 정보 유출 정리: 피해 금융사 16곳과 내 정보 확인·대응 방법", "url": "https://k-keyword.com/finance-ai-hacking-guide/", "status": "미완료", "updated_at": ""}, {"id": 39, "title": "아이폰 듀오(iPhone Duo) 가격·스펙·출시일 정리: 한국 출고가 329만 원부터", "url": "https://k-keyword.com/iphone-duo-launch-price-specs/", "status": "미완료", "updated_at": ""}, {"id": 37, "title": "유니버셜 클립보드가 안 될 때 해결 방법: 아이폰·맥·아이패드 복사 붙여넣기 점검", "url": "https://k-keyword.com/universal-clipboard-sync-fix/", "status": "미완료", "updated_at": ""}, {"id": 35, "title": "사이드카 연결 오류 해결: 아이패드를 맥북 보조 모니터로 쓰는 방법", "url": "https://k-keyword.com/sidecar-ipad-mac-second-display/", "status": "미완료", "updated_at": ""}, {"id": 33, "title": "아이폰 맥북 에어드롭 안 될 때 해결 방법: 기기가 안 보이거나 전송이 멈출 때", "url": "https://k-keyword.com/airdrop-not-working-fix/", "status": "미완료", "updated_at": ""}, {"id": 30, "title": "정부24 앱 로그인·민원 서류 발급 방법과 모바일 신분증 이용 전 확인할 점", "url": "https://k-keyword.com/gov24-app-login-and-id-guide/", "status": "미완료", "updated_at": ""}, {"id": 125, "title": "은행 앱 송금하는 방법: 큰 글씨 설정부터 보이스피싱 예방까지", "url": "https://k-keyword.com/mobile-banking-transfer-guide/", "status": "미완료", "updated_at": ""}, {"id": 28, "title": "패스(PASS) 앱 모바일 신분증 이용 방법과 오류 점검 가이드", "url": "https://k-keyword.com/pass-mobile-id-guide/", "status": "미완료", "updated_at": ""}, {"id": 26, "title": "네이버 인증서 발급·갱신 방법과 만료·오류 해결 총정리", "url": "https://k-keyword.com/naver-certificate-guide/", "status": "미완료", "updated_at": ""}, {"id": 21, "title": "아이폰·아이패드 연동 활용법 6가지: 클립보드부터 핫스팟까지", "url": "https://k-keyword.com/iphone-ipad-continuity-tips/", "status": "미완료", "updated_at": ""}, {"id": 19, "title": "안 쓰는 구형 애플워치 재활용 아이디어 7가지와 주의할 점", "url": "https://k-keyword.com/old-apple-watch-reuse-ideas/", "status": "미완료", "updated_at": ""}, {"id": 17, "title": "애플워치 러닝 기록 정확도 높이는 설정과 앱 활용법 (가민과 비교)", "url": "https://k-keyword.com/apple-watch-running-gps-tips/", "status": "미완료", "updated_at": ""}, {"id": 13, "title": "애플워치 애플페이 등록·결제 방법과 안 될 때 점검 사항", "url": "https://k-keyword.com/apple-watch-apple-pay-guide/", "status": "미완료", "updated_at": ""}, {"id": 8, "title": "아이폰이 재시동을 반복하거나 사과 로고에서 멈출 때 해결 방법", "url": "https://k-keyword.com/iphone-restart-loop-fix/", "status": "미완료", "updated_at": ""}], "queue": [], "scheduled": [], "logs": [{"time": "2026-11-19 13:17", "actor": "팀장", "type": "보고", "loop": null, "message": "AI 오피스 초기 세팅 완료"}]}</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
+function tone(s){
+  s = String(s||'');
+  if (/완료|합격|PASS|예약/.test(s)) return 'p-ok';
+  if (/반려|불합격|FAIL|중단|오류/.test(s)) return 'p-bad';
+  if (/중|진행|집필|검수|작업|재검수/.test(s)) return 'p-warn';
+  if (/보고/.test(s)) return 'p-acc';
+  return 'p-idle';
+}
+const pill = s => `<span class="pill ${tone(s)}">${esc(s)}</span>`;
+const $ = id => document.getElementById(id);
+
+$('updated').textContent = D.updated_at || '-';
+
+const R = D.remodel || [], Q = D.queue || [], S = D.scheduled || [], L = D.logs || [];
+const cnt = st => R.filter(p => p.status === st).length;
+const done = cnt('완료'), pct = R.length ? Math.round(done / R.length * 100) : 0;
+
+$('kpis').innerHTML = [
+  [`${done}/${R.length}`, '리모델링 완료'],
+  [Q.filter(q => q.status !== '예약완료').length, '키워드 대기'],
+  [S.length, '예약 발행'],
+  [L.filter(l => /반려|루프/.test(l.type)).length, '반려·수정 루프'],
+].map(([v, k]) => `<div class="kpi"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('');
+
+$('team').innerHTML = (D.team || []).map(m => `
+  <div class="card member ${m.id === 'lead' ? 'lead' : ''}">
+    <div class="mhead"><span class="mname">${esc(m.name)}</span><span class="model">${esc(m.model)}</span></div>
+    <div class="role">${esc(m.role)}</div>
+    <div>${pill(m.status || '대기')}</div>
+    <div class="report">${m.last_report ? esc(m.last_report) : '<span class="sub">보고 없음</span>'}</div>
+    <div class="meta"><span>${esc(m.report_at || '')}</span><span>누적 ${esc(m.count || 0)}건</span></div>
+  </div>`).join('');
+
+const ring = $('ring'); ring.style.setProperty('--p', pct); ring.dataset.label = pct + '%';
+const segs = [['완료', 'var(--ok)'], ['검수중', 'var(--warn)'], ['미완료', 'var(--idle)']];
+$('rlegend').innerHTML = segs.map(([k]) => `<div>${pill(k)} ${cnt(k)}편</div>`).join('') +
+  `<div class="bar">${segs.map(([k, c]) => `<i style="width:${R.length ? cnt(k) / R.length * 100 : 0}%;background:${c}"></i>`).join('')}</div>`;
+
+let rf = '전체';
+function drawR(){
+  $('rfilters').innerHTML = ['전체', ...REM].map(f => `<button class="${f === rf ? 'on' : ''}" data-f="${f}">${f}</button>`).join('');
+  const rows = R.filter(p => rf === '전체' || p.status === rf);
+  $('rlist').innerHTML = rows.length ? rows.map(p => {
+    const u = safeUrl(p.url);
+    const t = u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(p.title)}</a>` : esc(p.title);
+    return `<li><span class="t">${t}</span>${pill(p.status)}</li>`;
+  }).join('') : '<li class="empty">글이 없어요. wp_manager.py sync-remodel 로 동기화하세요.</li>';
+}
+const REM = ['미완료', '검수중', '완료'];
+$('rfilters').addEventListener('click', e => { if (e.target.dataset.f){ rf = e.target.dataset.f; drawR(); } });
+drawR();
+
+$('queue').innerHTML = Q.length ? Q.map(q => `<li><span class="t">${esc(q.keyword)}</span>${pill(q.status)}</li>`).join('')
+  : '<li class="empty">선택된 키워드가 없어요.</li>';
+
+$('sched').querySelector('tbody').innerHTML = S.length ? S.map(s => {
+  const u = safeUrl(s.link);
+  return `<tr>
+    <td class="c-title">${u ? `<a href="${esc(u)}" target="_blank" rel="noopener" style="color:inherit">${esc(s.title)}</a>` : esc(s.title)}</td>
+    <td>${esc(s.date)}</td>
+    <td class="num" data-k="글자">${Number(s.chars || 0).toLocaleString()}자</td>
+    <td class="num" data-k="이미지">${esc(s.images)}장</td>
+    <td>${pill(s.pass ? 'PASS' : 'FAIL')}</td></tr>`;
+}).join('') : '<tr><td colspan="5" class="empty">예약된 글이 없어요.</td></tr>';
+
+$('logs').innerHTML = L.length ? L.map(l => `
+  <li><span class="when">${esc(l.time)} · ${esc(l.actor)}${l.loop ? ` · 루프 ${esc(l.loop)}/3` : ''}</span>
+  <span>${pill(l.type)}</span><span>${esc(l.message)}</span></li>`).join('')
+  : '<li class="empty">로그가 없어요.</li>';
+</script>
+</body>
+</html>
