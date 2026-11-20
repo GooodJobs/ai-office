@@ -63,7 +63,7 @@ h2 .more{margin-left:auto;font-size:12px;font-weight:600;color:var(--muted);back
 .left{display:flex;flex-direction:column;gap:16px;min-height:0}
 /* 색인 현황 카드 · 카테고리 균형 카드 (가로 막대 공통) */
 h2 .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);background:var(--soft);border-radius:99px;padding:2px 9px}
-.meter{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:4px 12px;padding:8px 0;border-top:1px solid var(--line)}
+.meter{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:4px 12px;padding:7px 0;border-top:1px solid var(--line)}
 .meter:first-of-type{border-top:0;padding-top:0}
 .meter .nm{font-weight:700;font-size:13.5px}
 .meter .v{text-align:right;font-size:13px;color:var(--sub)}
@@ -91,9 +91,13 @@ h2 .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);backg
 .task .meta span{display:block;color:var(--muted);font-size:12px}
 .task .ft{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:12.5px}
 .right{display:flex;flex-direction:column;gap:16px;min-height:0}
-.quick li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line);cursor:pointer;font-size:13.5px}
+.left,.right{overflow-y:auto;scrollbar-width:thin}
+.left > .card,.right > .quick{flex:none}
+.right > .feed{flex:1 0 180px}
+.quick li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer;font-size:13.5px}
 .quick li:first-child{border-top:0}
-.quick li:hover b{background:var(--accent)}
+.quick li:hover b{background:var(--accent);color:var(--accent-ink)}
+.quick li:nth-child(-n+3) span{color:var(--accent);font-weight:600}
 .quick b{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-size:12px}
 .feed{flex:1}
 .feed li{display:grid;grid-template-columns:32px 1fr;gap:2px 12px;padding:10px 0;border-top:1px solid var(--line);font-size:13px}
