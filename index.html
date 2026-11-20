@@ -188,7 +188,7 @@ ul{list-style:none;margin:0;padding:0}
 
   <div class="hello">
     <div><h1>안녕하세요!</h1><div class="date" id="date"></div></div>
-    <div class="mid">오늘 할 일</div>
+    <div class="mid" id="mid">오늘 할 일</div>
     <div class="team" id="team"></div>
   </div>
 
@@ -273,6 +273,7 @@ const views = [...document.querySelectorAll('.view')];
 function go(id){
   views.forEach(v => v.classList.toggle('on', v.id === id));
   document.querySelectorAll('[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === id));
+  $('mid').textContent = id === 'v-home' ? '오늘 할 일' : views.find(v => v.id === id).dataset.name;
   history.replaceState(null, '', '#' + id);
 }
 const navHtml = views.map(v => `<button data-v="${v.id}">${v.dataset.name}${v.id === 'v-kw' && pending.length ? `<span class="dot">${pending.length}</span>` : ''}</button>`).join('');
