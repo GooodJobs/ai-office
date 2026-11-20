@@ -99,7 +99,8 @@ h2 .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);backg
 .mate .ic b{position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;border:2px solid var(--card);background:var(--idle)}
 .mate .ic b.p-ok{background:var(--ok)} .mate .ic b.p-warn{background:var(--warn)} .mate .ic b.p-bad{background:var(--bad)}
 .mate .nm{display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;min-width:0}
-.mate .nm .pill{margin-left:auto;font-size:10.5px;padding:2px 8px}
+.mate .nm .n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mate .nm .pill{margin-left:auto;flex:none;font-size:10.5px;padding:2px 8px}
 .mate .rl{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mate .rp{font-size:11.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:1300px){.crewgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -361,7 +362,7 @@ const ROLE = {lead: '총괄·재검수·발행', remodeler: '이미지 제작', 
 const ago = s => { const m = Math.round((now - parse(s)) / 6e4); return !s || isNaN(m) ? '' : m < 60 ? `${Math.max(m, 0)}분 전` : m < 1440 ? `${Math.round(m / 60)}시간 전` : `${Math.round(m / 1440)}일 전`; };
 $('crew').innerHTML = T.map(m => `<div class="mate" title="${esc(m.name)} · ${esc(m.role || '')}\n${esc(m.last_report || '보고 없음')} ${esc(m.report_at || '')}">
   <span class="ic">${esc(SHORT[m.id] || m.name.slice(0, 2))}<b class="${tone(m.status)}"></b></span>
-  <span class="nm">${esc(m.name)}${pill(m.status || '대기')}</span>
+  <span class="nm"><span class="n">${esc(m.name)}</span>${pill(m.status || '대기')}</span>
   <span class="rl">${esc(ROLE[m.id] || m.role || '')} · ${esc(String(m.model || '').replace(/^claude-/, ''))}</span>
   <span class="rp">${esc(m.last_report || '보고 없음')}${m.report_at ? ' · ' + ago(m.report_at) : ''}</span></div>`).join('') || '<div class="empty">팀원 정보가 없어요.</div>';
 
