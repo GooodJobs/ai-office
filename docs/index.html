@@ -367,21 +367,31 @@ function drawCal(){
     <div class="cg">${'일월화수목금토'.split('').map(w => `<b>${w}</b>`).join('')}${cells.join('')}</div>
     <div class="cardnote"><i class="lg pub"></i>발행 <i class="lg sch"></i>예약 <i class="lg mk"></i>목표${nextMk ? ` · ${esc(nextMk.date.slice(5).replace('-', '/'))} ${esc(nextMk.label)}` : next ? ` · 다음 ${esc(next.date.slice(5, 10).replace('-', '/'))} ${esc(next.title)}` : ''}</div>`;
 }
-// ---- 구글 색인 요청 목록: 한 줄 클릭 = 주소 복사 + 완료 표시(이 기기에만 저장)
+// ---- 구글 색인 요청 목록: 줄 클릭 = 주소 복사. 복사한 줄은 그날 자정에 목록에서 사라지고,
+//      예약 글은 발행 시각이 지나면 목록에 저절로 들어온다. (복사 기록은 이 기기 브라우저에만 저장)
 (function(){
-  const IQ = (D.index_queue || {}).days || [], KEY = 'kk-idx-done';
+  const KEY = 'kk-idx-done', ITEMS = (D.index_queue || {}).items || [];
   let done = {}; try { done = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
-  const left = IQ.reduce((n, d) => n + d.urls.filter(u => !done[u]).length, 0);
-  $('idxq').className = 'card iq';
-  $('idxq').innerHTML = `<h2>구글 색인 요청 목록<span class="tag">남은 ${left}개</span></h2>
-    <div class="cardnote">줄을 누르면 주소가 복사돼요. 서치 콘솔 맨 위 검색창에 붙여 넣고 Enter → 색인 생성 요청</div>` +
-    '<div class="body">' + (IQ.length ? IQ.map(d => `<h3>${esc(d.label)}</h3><ul class="list">${d.urls.map(u => `<li data-u="${esc(u)}" class="${done[u] ? 'done' : ''}" role="button" tabindex="0"><span>${esc(u.replace('https://k-keyword.com/', ''))}</span><b>${done[u] ? '복사함' : '복사'}</b></li>`).join('')}</ul>`).join('')
-      : '<div class="empty">목록이 없어요. 채팅에 "색인 신청 목록 뽑아줘"라고 보내 주세요.</div>') + '</div>';
-  const go = li => copyText(li.dataset.u, () => { done[li.dataset.u] = 1; li.classList.add('done'); li.querySelector('b').textContent = '복사함';
-    try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {} };
+  function render(){
+    const today = ymd(new Date());
+    Object.keys(done).forEach(u => { if (typeof done[u] !== 'string') done[u] = today; if (done[u] < today) delete done[u]; });  // 어제까지 복사한 줄 정리
+    save();
+    const urls = ITEMS.filter(i => parse(i.date) <= new Date() && !(done[i.url] && done[i.url] < today)).map(i => i.url);
+    const chunks = []; for (let i = 0; i < urls.length; i += 10) chunks.push(urls.slice(i, i + 10));
+    const left = urls.filter(u => !done[u]).length, wait = ITEMS.filter(i => parse(i.date) > new Date()).length;
+    $('idxq').className = 'card iq';
+    $('idxq').innerHTML = `<h2>구글 색인 요청 목록<span class="tag">남은 ${left}개</span></h2>
+      <div class="cardnote">줄을 누르면 주소가 복사돼요. 서치 콘솔 맨 위 검색창에 붙여 넣고 Enter → 색인 생성 요청. 복사한 줄은 자정에 사라져요.${wait ? ` 예약 글 ${wait}편은 발행되면 자동으로 들어와요.` : ''}</div>
+      <div class="body">` + (chunks.length ? chunks.map((c, n) => `<h3>${n + 1}일차 ${c.length}개</h3><ul class="list">${c.map(u => `<li data-u="${esc(u)}" class="${done[u] ? 'done' : ''}" role="button" tabindex="0"><span>${esc(u.replace('https://k-keyword.com/', ''))}</span><b>${done[u] ? '복사함' : '복사'}</b></li>`).join('')}</ul>`).join('')
+        : '<div class="empty">요청할 글이 없어요. 새 글이 발행되면 여기에 자동으로 나타나요.</div>') + '</div>';
+  }
+  const go = li => copyText(li.dataset.u, () => { done[li.dataset.u] = ymd(new Date()); save(); li.classList.add('done'); li.querySelector('b').textContent = '복사함';
     $('idxq').querySelector('.tag').textContent = '남은 ' + $('idxq').querySelectorAll('li:not(.done)').length + '개'; });
   $('idxq').addEventListener('click', e => { const li = e.target.closest('li[data-u]'); if (li) go(li); });
   $('idxq').addEventListener('keydown', e => { const li = e.target.closest('li[data-u]'); if (li && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); go(li); } });
+  render(); let day = ymd(new Date()), cnt = ITEMS.filter(i => parse(i.date) <= new Date()).length;
+  setInterval(() => { const n = ITEMS.filter(i => parse(i.date) <= new Date()).length; if (ymd(new Date()) !== day || n !== cnt) { day = ymd(new Date()); cnt = n; render(); } }, 60000);  // 자정·발행 시각 지나면 다시 그림
 })();
 drawCal();
 $('cal').addEventListener('click', e => { const b = e.target.closest('.nv'); if (b) { calM = new Date(calM.getFullYear(), calM.getMonth() + Number(b.dataset.m), 1); drawCal(); } });
