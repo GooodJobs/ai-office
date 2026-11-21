@@ -126,6 +126,7 @@ h2 .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);backg
 .left > .card,.right > .quick{flex:none}
 .right > .feed{flex:1 0 180px}
 .quick li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer;font-size:13.5px}
+#idxq{grid-row:1/3}
 .iq h3{font-size:12px;color:var(--muted);margin:14px 0 4px;font-weight:600}
 .iq li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer;font-size:13.5px;min-width:0}
 .iq li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -312,9 +313,10 @@ const pill = s => `<span class="pill ${tone(s)}">${esc(s)}</span>`;
 function toast(t){ const e = $('toast'); e.textContent = t; e.classList.add('on'); setTimeout(() => e.classList.remove('on'), 1600); }
 function copyText(t, done){
   const ok = () => { toast('복사됨: ' + t.split('\n')[0].slice(0, 30)); done && done(); };
-  if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(t).then(ok); return; }
-  const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
-  document.execCommand('copy'); ta.remove(); ok();
+  const old = () => { const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
+    let good = false; try { good = document.execCommand('copy'); } catch (e) {} ta.remove(); good ? ok() : toast('복사하지 못했어요. 주소를 길게 눌러 직접 복사해 주세요'); };
+  if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(t).then(ok, old); return; }
+  old();
 }
 
 const R = D.remodel || [], Q = D.queue || [], S = D.scheduled || [], L = D.logs || [], RS = D.research || [];
@@ -373,8 +375,8 @@ function drawCal(){
   $('idxq').className = 'card iq';
   $('idxq').innerHTML = `<h2>구글 색인 요청 목록<span class="tag">남은 ${left}개</span></h2>
     <div class="cardnote">줄을 누르면 주소가 복사돼요. 서치 콘솔 맨 위 검색창에 붙여 넣고 Enter → 색인 생성 요청</div>` +
-    (IQ.length ? IQ.map(d => `<h3>${esc(d.label)}</h3><ul class="list">${d.urls.map(u => `<li data-u="${esc(u)}" class="${done[u] ? 'done' : ''}" role="button" tabindex="0"><span>${esc(u.replace('https://k-keyword.com/', ''))}</span><b>${done[u] ? '복사함' : '복사'}</b></li>`).join('')}</ul>`).join('')
-      : '<div class="empty">목록이 없어요. 채팅에 "색인 신청 목록 뽑아줘"라고 보내 주세요.</div>');
+    '<div class="body">' + (IQ.length ? IQ.map(d => `<h3>${esc(d.label)}</h3><ul class="list">${d.urls.map(u => `<li data-u="${esc(u)}" class="${done[u] ? 'done' : ''}" role="button" tabindex="0"><span>${esc(u.replace('https://k-keyword.com/', ''))}</span><b>${done[u] ? '복사함' : '복사'}</b></li>`).join('')}</ul>`).join('')
+      : '<div class="empty">목록이 없어요. 채팅에 "색인 신청 목록 뽑아줘"라고 보내 주세요.</div>') + '</div>';
   const go = li => copyText(li.dataset.u, () => { done[li.dataset.u] = 1; li.classList.add('done'); li.querySelector('b').textContent = '복사함';
     try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {}
     $('idxq').querySelector('.tag').textContent = '남은 ' + $('idxq').querySelectorAll('li:not(.done)').length + '개'; });
