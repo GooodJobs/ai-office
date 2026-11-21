@@ -156,6 +156,7 @@ ul{list-style:none;margin:0;padding:0}
 .kl{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
 .kl input{width:18px;height:18px;margin:2px 0 0;flex:none;accent-color:var(--ink)}
 .kt{font-size:15px;font-weight:700;line-height:1.35}
+.kn{display:inline-block;min-width:22px;height:22px;line-height:22px;margin-right:6px;border-radius:6px;background:#EFF6FF;color:#2563EB;font-size:12px;text-align:center;vertical-align:1px}
 .kbadges{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 8px}
 .vol{height:6px;border-radius:99px;background:var(--idle-soft);overflow:hidden;margin:4px 0 6px}
 .vol i{display:block;height:100%;background:var(--accent)}
@@ -469,7 +470,7 @@ function drawResearch(){
   let note = '';
   if (isDisc && r.status === '승인대기')
     note = canEdit ? '<div class="notice">검증·중복 검사·짧은 표현 변환까지 마친 키워드예요. <b>★ 팀장 추천</b>을 참고해서 쓸 키워드를 체크하고 <b>승인 저장</b>을 눌러 주세요. 저장 전에는 새 키워드 발굴이 멈춰 있어요.</div>'
-                   : '<div class="notice">승인 대기 중 · 체크는 PC에서 <b>open_dashboard.bat</b>으로 연 화면에서 할 수 있어요.</div>';
+                   : '<div class="notice">승인 대기 중 · 폰에서는 <b>채팅으로 승인</b>할 수 있어요. 키워드 앞 번호를 보고 Claude 채팅에 <b>"3·5·7번 승인"</b>처럼 보내 주세요. (모두 안 쓰려면 "승인 없음")</div>';
   else if (isDisc) note = `<div class="notice info">검토 완료 (${esc(r.reviewed_at || '')}) · 승인 ${nApproved}개 → 글 작성 단계로 넘어가요.</div>`;
   $('research').innerHTML = `
     <div class="rmeta"><span>${esc(r.time)}</span><span>${kws.length}개</span>${isDisc ? pill(r.status) : ''}<span>파일: ${esc(r.file)}</span>
@@ -477,7 +478,7 @@ function drawResearch(){
       ${isDisc && canEdit ? '<button id="selall">전체 선택/해제</button><button id="saveap" class="cta">승인 저장</button>' : ''}</div>
     ${note}
     <div class="kwgrid">${kws.map((k, j) => `<div class="kw ${k.approved ? 'ap' : ''} ${k.recommend ? 'rec' : ''}">
-        <label class="kl">${isDisc ? `<input type="checkbox" data-j="${j}" ${k.approved ? 'checked' : ''} ${canEdit ? '' : 'disabled'}>` : ''}<span class="kt">${esc(k.keyword)}</span></label>
+        <label class="kl">${isDisc ? `<input type="checkbox" data-j="${j}" ${k.approved ? 'checked' : ''} ${canEdit ? '' : 'disabled'}>` : ''}<span class="kt"><span class="kn">${j + 1}</span>${esc(k.keyword)}</span></label>
         <div class="kbadges">${k.recommend ? '<span class="pill p-acc">★ 팀장 추천</span>' : ''}${k.verify && k.verify.grade ? pill(k.verify.grade) : (k.tag ? `<span class="pill p-idle">${esc(k.tag)}</span>` : '')}${k.dup === true ? '<span class="pill p-bad">중복 의심</span>' : (k.dup === false ? '<span class="pill p-idle">중복 없음</span>' : '')}</div>
         ${k.verify && !k.verify.error ? `<div class="vol" title="월 검색량 비교"><i style="width:${Math.max(2, Number(k.verify.total || 0) / maxV * 100)}%"></i></div>` : ''}
         <div class="vf">${esc(vfText(k.verify))}</div>
