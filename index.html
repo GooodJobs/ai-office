@@ -101,8 +101,10 @@ h2 .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);backg
 .cg .d{height:26px;display:grid;place-items:center;border-radius:6px;color:var(--sub);border:1px solid transparent}
 .cg .d.pub{background:var(--accent);color:var(--accent-ink);font-weight:700;cursor:help}
 .cg .d.sch{border-color:var(--accent);color:var(--accent);font-weight:700;cursor:help}
+.cg .d.mk{background:var(--warn-soft);color:var(--warn);border-color:var(--warn);font-weight:700;cursor:help}
 .cg .d.today{box-shadow:inset 0 0 0 2px var(--ink)}
 .cal .cardnote{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lg.mk{background:var(--warn-soft);border:1px solid var(--warn)}
 .lg{display:inline-block;width:9px;height:9px;border-radius:3px;margin:0 4px 0 0;vertical-align:-1px}
 .lg.pub{background:var(--accent)} .lg.sch{border:1.5px solid var(--accent);margin-left:6px}
 #quick{max-height:138px;overflow-y:auto;scrollbar-width:thin;margin:0 -4px;padding:0 4px}
@@ -339,6 +341,7 @@ const unesc = s => { const t = document.createElement('textarea'); t.innerHTML =
 const CALP = [...S, ...((D.categories || {}).posts || []).map(p => ({...p, title: unesc(p.title)}))];
 const seenT = new Set();
 CALP.forEach(s => { const d = parse(s.date); if (isNaN(d) || seenT.has(s.title)) return; seenT.add(s.title); (byDay[ymd(d)] = byDay[ymd(d)] || []).push(s); });
+const MARKS = D.marks || [];
 let calM = new Date(now.getFullYear(), now.getMonth(), 1);
 function drawCal(){
   const y = calM.getFullYear(), mo = calM.getMonth(), first = new Date(y, mo, 1).getDay(), n = new Date(y, mo + 1, 0).getDate();
@@ -347,12 +350,13 @@ function drawCal(){
   for (let d = 1; d <= n; d++) {
     const key = ymd(new Date(y, mo, d)), ps = byDay[key] || [], fut = ps.some(p => parse(p.date) > now);
     cnt += ps.length;
-    cells.push(`<span class="d${ps.length ? (fut ? ' sch' : ' pub') : ''}${key === ymd(now) ? ' today' : ''}" title="${esc(ps.map(p => (parse(p.date) > now ? '[예약] ' : '[발행] ') + p.title).join('\n'))}">${d}</span>`);
+    cells.push(`<span class="d${ps.length ? (fut ? ' sch' : ' pub') : ''}${MARKS.some(m => m.date === key) ? ' mk' : ''}${key === ymd(now) ? ' today' : ''}" title="${esc(MARKS.filter(m => m.date === key).map(m => '[목표] ' + m.label).concat(ps.map(p => (parse(p.date) > now ? '[예약] ' : '[발행] ') + p.title)).join('\n'))}">${d}</span>`);
   }
+  const nextMk = MARKS.filter(m => m.date >= ymd(now))[0];
   const next = S.filter(s => parse(s.date) > now).sort((a, b) => parse(a.date) - parse(b.date))[0];
   $('cal').innerHTML = `<h2>발행 캘린더<span class="tag">${mo + 1}월 ${cnt}편</span><button class="nv" data-m="-1" aria-label="이전 달">‹</button><button class="nv" data-m="1" aria-label="다음 달">›</button></h2>
     <div class="cg">${'일월화수목금토'.split('').map(w => `<b>${w}</b>`).join('')}${cells.join('')}</div>
-    <div class="cardnote"><i class="lg pub"></i>발행 <i class="lg sch"></i>예약${next ? ` · 다음 ${esc(next.date.slice(5, 10).replace('-', '/'))} ${esc(next.title)}` : ''}</div>`;
+    <div class="cardnote"><i class="lg pub"></i>발행 <i class="lg sch"></i>예약 <i class="lg mk"></i>목표${nextMk ? ` · ${esc(nextMk.date.slice(5).replace('-', '/'))} ${esc(nextMk.label)}` : next ? ` · 다음 ${esc(next.date.slice(5, 10).replace('-', '/'))} ${esc(next.title)}` : ''}</div>`;
 }
 drawCal();
 $('cal').addEventListener('click', e => { const b = e.target.closest('.nv'); if (b) { calM = new Date(calM.getFullYear(), calM.getMonth() + Number(b.dataset.m), 1); drawCal(); } });
