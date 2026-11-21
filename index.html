@@ -503,8 +503,7 @@ function drawResearch(){
       const res = await fetch('/api/research/delete', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id: r.id})}).then(x => x.json());
       if (!res.ok) throw new Error(res.error || '삭제 실패');
       location.replace('/?t=' + Date.now() + '#v-kw');
-    } catch (err) { alert('삭제하지 못했어요. 승인 서버(open_dashboard.bat)가 켜져 있는지 확인하고 다시 눌러 주세요.
-(원인: ' + err.message + ')'); e.target.disabled = false; }
+    } catch (err) { alert('삭제하지 못했어요. 승인 서버(open_dashboard.bat)가 켜져 있는지 확인하고 다시 눌러 주세요.\n(원인: ' + err.message + ')'); e.target.disabled = false; }
   };
   if (isDisc && canEdit){
     $('research').onchange = () => { dirty = true; };
@@ -518,8 +517,7 @@ function drawResearch(){
         if (!res.ok) throw new Error(res.error || '저장 실패');
         dirty = false; e.target.textContent = `저장됨 (${res.approved}개)`;
         setTimeout(() => location.replace('/?t=' + Date.now() + '#v-kw'), 1200);
-      } catch (err) { alert('저장하지 못했어요. 승인 서버(open_dashboard.bat)가 켜져 있는지 확인하고 다시 눌러 주세요. 체크한 내용은 그대로 남아 있어요.
-(원인: ' + err.message + ')'); e.target.disabled = false; e.target.textContent = '승인 저장'; }
+      } catch (err) { alert('저장하지 못했어요. 승인 서버(open_dashboard.bat)가 켜져 있는지 확인하고 다시 눌러 주세요. 체크한 내용은 그대로 남아 있어요.\n(원인: ' + err.message + ')'); e.target.disabled = false; e.target.textContent = '승인 저장'; }
     };
   }
 }
