@@ -136,6 +136,7 @@ h2 .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);backg
 .iq li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .iq li b{flex:none;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
 .iq li:hover b{background:var(--accent);color:var(--accent-ink)}
+.iq .plan li{cursor:default;color:var(--muted)} .iq .plan li b,.iq .plan li:hover b{color:var(--muted);background:var(--line)}
 .iq li.done span{color:var(--muted);text-decoration:line-through}.iq li.done b{background:var(--ok-soft);color:var(--ok)}
 .quick li:first-child{border-top:0}
 .quick li:hover b{background:var(--accent);color:var(--accent-ink)}
@@ -397,13 +398,15 @@ function drawCal(){
       const urls = visible(ITEMS).map(i => i.url);
       for (let i = 0; i < urls.length; i += 10) groups.push({label: `${groups.length + 1}일차`, urls: urls.slice(i, i + 10)});
     }
+    // 시작일 전에는 재요청 일정을 흐린 '예정' 목록으로 미리 보여 준다(누를 수 없음)
+    const preview = RE && !reMode ? [...new Set(RE.items.map(i => i.plan))].map(p => `<h3 class="plan">${dayLabel(p)} 예정 ${RE.items.filter(i => i.plan === p).length}개</h3><ul class="list plan">${RE.items.filter(i => i.plan === p).map(i => `<li><span>${esc(i.url.replace('https://k-keyword.com/', ''))}</span><b>예정</b></li>`).join('')}</ul>`).join('') : '';
     const all = groups.flatMap(g => g.urls), left = all.filter(u => !isDone(u)).length, wait = ITEMS.filter(i => parse(i.date) > new Date()).length;
     const reNote = RE && !reMode ? ` ${dayLabel(RE.start)}부터 수정한 글 ${RE.items.length}편을 하루 ${RE.per_day}개씩 다시 요청해요(목록이 자동으로 바뀌어요).` : '';
     $('idxq').className = 'card iq';
     $('idxq').innerHTML = `<h2>구글 색인 요청 목록<span class="tag">남은 ${left}개</span></h2>
       <div class="cardnote">줄을 누르면 주소가 복사돼요. 서치 콘솔 맨 위 검색창에 붙여 넣고 Enter → 색인 생성 요청. 복사한 줄은 자정에 사라져요. 요청을 못 했으면 '복사함'을 눌러 되돌리세요.${wait ? ` 예약 글 ${wait}편은 발행되면 자동으로 들어와요.` : ''}${reNote}</div>
       <div class="body">` + (groups.length ? groups.map(g => `<h3>${g.label} ${g.urls.length}개</h3><ul class="list">${g.urls.map(u => `<li data-u="${esc(u)}" class="${isDone(u) ? 'done' : ''}" role="button" tabindex="0"><span>${esc(u.replace('https://k-keyword.com/', ''))}</span><b${isDone(u) ? ' title="누르면 복사 전으로 되돌려요"' : ''}>${isDone(u) ? '복사함' : '복사'}</b></li>`).join('')}</ul>`).join('')
-        : '<div class="empty">요청할 글이 없어요. 새 글이 발행되면 여기에 자동으로 나타나요.</div>') + '</div>';
+        : (preview ? '' : '<div class="empty">요청할 글이 없어요. 새 글이 발행되면 여기에 자동으로 나타나요.</div>')) + preview + '</div>';
   }
   const record = (url, ok) => { if (/^https?:$/.test(location.protocol)) fetch('/api/idx', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({url, done: ok})}).catch(() => {}); };  // PC 서버면 요청 완료를 파일에 바로 기록
   const go = li => copyText(li.dataset.u, () => { done[li.dataset.u] = ymd(new Date()); save(); record(li.dataset.u, true); li.classList.add('done'); li.querySelector('b').textContent = '복사함';
